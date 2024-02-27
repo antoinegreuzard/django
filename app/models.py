@@ -3,5 +3,8 @@ from django.db import models
 
 
 class CustomUser(AbstractUser):
-    # Ajoutez des champs supplémentaires ici
     role = models.CharField(max_length=30)
+    email = models.EmailField(unique=True)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []

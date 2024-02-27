@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Register</title>
+</head>
+<body>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  {% if form.errors %}
+  <div class="alert alert-danger">
+    <strong>Erreur !</strong> Veuillez corriger les erreurs ci-dessous.
+  </div>
+  {% endif %}
+  <button type="submit">S'inscrire</button>
+</form>
+
+</body>
+</html>

@@ -77,6 +77,8 @@ WSGI_APPLICATION = 'server.wsgi.application'
 
 AUTH_USER_MODEL = 'app.CustomUser'
 
+LOGIN_URL = 'login'
+
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
