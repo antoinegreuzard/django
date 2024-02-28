@@ -15,7 +15,7 @@ class UserRegisterForm(UserCreationForm):
 
     class Meta(UserCreationForm.Meta):
         model = User
-        fields = ['email', 'password1', 'password2', 'role']
+        fields = ['email', 'password1', 'password2']
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -25,6 +25,7 @@ class UserRegisterForm(UserCreationForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
+        user.role = 'client'
         user.username = self.cleaned_data.get('email')
         if commit:
             user.save()

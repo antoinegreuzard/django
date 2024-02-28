@@ -35,6 +35,8 @@ def login_view(request):
             if user is not None:
                 login(request, user)
                 return redirect('account')
+            else:
+                form.add_error(None, "Adresse e-mail ou mot de passe incorrect.")
     else:
         form = UserLoginForm()
     return render(request, "app/login.html", {'form': form})
