@@ -53,7 +53,6 @@ class CustomUser(AbstractUser):
     as the unique identifier for authentication instead of a username.
     """
 
-    role = models.CharField(max_length=30, default='client')
     email = models.EmailField(unique=True)
 
     USERNAME_FIELD = 'email'

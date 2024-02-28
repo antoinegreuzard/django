@@ -18,8 +18,7 @@ class UserViewTests(TestCase):
         """Ensure that a user can be created successfully."""
         url = reverse('signup')
         data = {'email': 'test@example.com',
-                'password': 'testpassword123',
-                'role': 'client'}
+                'password': 'testpassword123'}
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(

@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('app', '0001_initial'),
     ]
@@ -30,6 +29,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='customuser',
             name='role',
-            field=models.CharField(default='client', max_length=30),
+            field=models.CharField(max_length=30),
         ),
     ]

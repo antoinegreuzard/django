@@ -9,7 +9,7 @@
 <div class="container">
   <h1>Bienvenue sur votre compte !</h1>
   <p>Email : {{ request.user.email }}</p>
-  <p>Rôle : {{ request.user.role }}</p>
+  <p>Role : {% if request.user.is_superuser %}Admin{% else %}Client{% endif %}</p>
   <a href="{% url 'logout' %}">Déconnexion</a>
 </div>
 </body>

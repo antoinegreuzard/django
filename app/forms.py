@@ -36,13 +36,12 @@ class UserRegisterForm(UserCreationForm):
 
     def save(self, commit=True):
         """
-        Save the new user instance. Overridden to set username as email and assign 'client' role.
+        Save the new user instance. Overridden to set username as email.
 
         :param commit: Whether to commit the save to the database.
         :return: The newly created user instance.
         """
         user = super().save(commit=False)
-        user.role = 'client'
         user.username = self.cleaned_data.get('email')
         if commit:
             user.save()
