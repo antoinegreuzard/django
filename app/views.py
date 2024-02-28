@@ -1,3 +1,8 @@
+"""
+Views module for handling requests related to
+user authentication and application functionality.
+"""
+
 from django.contrib.auth import authenticate, logout, login, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -6,16 +11,19 @@ from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .forms import UserLoginForm, UserRegisterForm
-from .models import Book
-from .serializers import UserSerializer, BookSerializer
+from app.forms import UserLoginForm, UserRegisterForm
+from app.models import Book
+from app.serializers import UserSerializer, BookSerializer
 
 User = get_user_model()
 
 
 class CreateUserView(APIView):
+    """API view for creating new users."""
+
     @staticmethod
     def post(request):
+        """Handle POST request to create a new user."""
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -24,11 +32,14 @@ class CreateUserView(APIView):
 
 
 class BookListCreateAPIView(generics.ListCreateAPIView):
+    """API view for listing and creating books."""
+
     queryset = Book.objects.all()
     serializer_class = BookSerializer
 
 
 def login_view(request):
+    """Handle user login requests."""
     if request.user.is_authenticated:
         return redirect('account')
     if request.method == "POST":
@@ -40,14 +51,13 @@ def login_view(request):
             if user is not None:
                 login(request, user)
                 return redirect('account')
-            else:
-                form.add_error(None, "Adresse e-mail ou mot de passe incorrect.")
     else:
         form = UserLoginForm()
     return render(request, "app/login.html", {'form': form})
 
 
 def register_view(request):
+    """Handle user registration requests."""
     if request.user.is_authenticated:
         return redirect('account')
     form = UserRegisterForm(request.POST or None)
@@ -58,16 +68,19 @@ def register_view(request):
 
 
 def logout_view(request):
+    """Log out the current user."""
     logout(request)
     return redirect('login')
 
 
 @login_required
 def account_view(request):
+    """Display the account page for logged-in users."""
     return render(request, "app/account.html")
 
 
 def home(request):
+    """Display the home page with an optional search query."""
     query: object = request.GET.get('q', '')
     if query:
         books = Book.objects.filter(
@@ -79,4 +92,5 @@ def home(request):
 
 
 def custom_404(request, exception):
+    """Redirect to home page on 404 errors."""
     return redirect('home')
