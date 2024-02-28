@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, logout, login, get_user_model
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.shortcuts import redirect, render
 from rest_framework import status, generics
 from rest_framework.response import Response
@@ -69,7 +70,9 @@ def account_view(request):
 def home(request):
     query: object = request.GET.get('q', '')
     if query:
-        books = Book.objects.filter(title__icontains=query)
+        books = Book.objects.filter(
+            Q(title__icontains=query) | Q(description__icontains=query)
+        )
     else:
         books = Book.objects.all()
     return render(request, "app/home.html", {'books': books, 'query': query})
