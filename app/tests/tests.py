@@ -35,7 +35,6 @@ class BookViewTests(APITestCase):
     @classmethod
     def setUpTestData(cls):
         """Set up data for the book tests."""
-        # Création d'un livre de test
         Book.objects.create(
             title="Test Book",
             description="Test Description",
