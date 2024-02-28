@@ -1,6 +1,5 @@
 from django.contrib.auth import authenticate, logout, login, get_user_model
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from rest_framework import status, generics
 from rest_framework.response import Response
@@ -14,7 +13,8 @@ User = get_user_model()
 
 
 class CreateUserView(APIView):
-    def post(self, request):
+    @staticmethod
+    def post(request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -67,8 +67,12 @@ def account_view(request):
 
 
 def home(request):
-    books = Book.objects.all()
-    return render(request, "app/home.html", {'books': books})
+    query: object = request.GET.get('q', '')
+    if query:
+        books = Book.objects.filter(title__icontains=query)
+    else:
+        books = Book.objects.all()
+    return render(request, "app/home.html", {'books': books, 'query': query})
 
 
 def custom_404(request, exception):

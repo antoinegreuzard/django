@@ -24,6 +24,12 @@
     </div>
   </nav>
   <h1>Liste des Livres</h1>
+  <form method="get" action="{% url 'home' %}" class="mb-4">
+    <div class="input-group mb-3">
+      <input type="text" class="form-control" name="q" placeholder="Rechercher un livre..." value="{{ request.GET.q }}">
+      <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Recherche</button>
+    </div>
+  </form>
   <div class="row">
     {% for book in books %}
       <div class="col-md-4">
