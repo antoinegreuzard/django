@@ -69,3 +69,7 @@ def account_view(request):
 def home(request):
     books = Book.objects.all()
     return render(request, "app/home.html", {'books': books})
+
+
+def custom_404(request, exception):
+    return redirect('home')
