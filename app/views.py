@@ -26,6 +26,8 @@ def home(request):
 
 
 def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('account')
     if request.method == "POST":
         form = UserLoginForm(request.POST)
         if form.is_valid():
@@ -43,6 +45,8 @@ def login_view(request):
 
 
 def register_view(request):
+    if request.user.is_authenticated:
+        return redirect('account')
     form = UserRegisterForm(request.POST or None)
     if form.is_valid():
         form.save()
