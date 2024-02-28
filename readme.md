@@ -8,7 +8,7 @@ Description courte de votre projet Django.
 Instructions pour installer et configurer votre projet.
 
 ```bash
-git clone https://yourproject.git
+git clone https://github.com/antoinegreuzard/django.git
 cd yourproject
 pip install -r requirements.txt
 python manage.py migrate
