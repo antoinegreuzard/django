@@ -2,12 +2,13 @@ from django.contrib.auth import authenticate, logout, login, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .forms import UserLoginForm, UserRegisterForm
-from .serializers import UserSerializer
+from .models import Book
+from .serializers import UserSerializer, BookSerializer
 
 User = get_user_model()
 
@@ -21,8 +22,9 @@ class CreateUserView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-def home(request):
-    return HttpResponse("Bienvenue sur mon site Django !")
+class BookListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
 
 
 def login_view(request):
@@ -62,3 +64,8 @@ def logout_view(request):
 @login_required
 def account_view(request):
     return render(request, "app/account.html")
+
+
+def home(request):
+    books = Book.objects.all()
+    return render(request, "app/home.html", {'books': books})

@@ -1,1 +1,13 @@
-/__pycache__
+*.pyc
+*~
+__pycache__
+db.sqlite3
+/static
+.DS_Store
+/env/
+*.pyo
+*.bak
+*.swp
+*~
+/.vscode/
+*.idea/
