@@ -20,6 +20,6 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('register/', register_view, name='register'),
     path('account/', account_view, name='account'),
-    path('books/', BookListCreateAPIView.as_view(), name='book-list-create'),
+    path('api/books/', BookListCreateAPIView.as_view(), name='book-list-create'),
     path('', home, name='home'),
 ]

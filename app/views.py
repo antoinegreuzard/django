@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.shortcuts import redirect, render
 from rest_framework import status, generics
+from rest_framework.permissions import BasePermission, SAFE_METHODS
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -16,6 +17,17 @@ from app.models import Book
 from app.serializers import UserSerializer, BookSerializer
 
 User = get_user_model()
+
+
+class IsAdminOrReadOnly(BasePermission):
+    """
+    Custom permission to only allow admin users to edit or delete objects.
+    """
+
+    def has_permission(self, request, view):
+        if request.method in SAFE_METHODS:
+            return True
+        return request.user and request.user.is_staff
 
 
 class CreateUserView(APIView):
@@ -36,6 +48,7 @@ class BookListCreateAPIView(generics.ListCreateAPIView):
 
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+    permission_classes = [IsAdminOrReadOnly]
 
 
 def login_view(request):
