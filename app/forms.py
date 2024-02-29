@@ -4,6 +4,8 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
 
+from app.models import Book
+
 User = get_user_model()
 
 
@@ -46,3 +48,21 @@ class UserRegisterForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+
+class BookForm(forms.ModelForm):
+    """
+    Form for creating and updating Book instances.
+
+    Uses custom widgets to enhance the user interface, including a date picker for the 'date' field,
+    and number inputs for 'price' and 'rate' fields to ensure proper data formatting.
+    """
+
+    class Meta:
+        model = Book
+        fields = '__all__'
+        widgets = {
+            'date': forms.DateInput(format='%d %m %Y', attrs={'type': 'date'}),
+            'price': forms.NumberInput(),
+            'rate': forms.NumberInput(attrs={'step': "0.01"}),
+        }

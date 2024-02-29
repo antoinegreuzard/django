@@ -15,7 +15,7 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse_lazy
 from rest_framework.views import APIView
 
-from app.forms import UserLoginForm, UserRegisterForm
+from app.forms import UserLoginForm, UserRegisterForm, BookForm
 from app.models import Book
 from app.serializers import UserSerializer, BookSerializer
 
@@ -120,7 +120,7 @@ class BookCreateView(CreateView):
     Redirects to the account page (`account`) after successful creation.
     """
     model = Book
-    fields = '__all__'
+    form_class = BookForm
     success_url = reverse_lazy('account')
 
 
@@ -131,7 +131,7 @@ class BookUpdateView(UpdateView):
     Redirects to the account page (`account`) after successful update.
     """
     model = Book
-    fields = '__all__'
+    form_class = BookForm
     success_url = reverse_lazy('account')
 
 
