@@ -5,6 +5,7 @@ user authentication and application functionality.
 
 from django.contrib.auth import authenticate, logout, login, get_user_model
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.views.generic import CreateView, UpdateView, DeleteView
@@ -31,6 +32,24 @@ class IsAdminOrReadOnly(BasePermission):
         if request.method in SAFE_METHODS:
             return True
         return request.user and request.user.is_staff
+
+
+class IsSuperUserMixin(UserPassesTestMixin):
+    """
+    Mixin to check if the user is a superuser.
+    It overrides the test_func to verify superuser status.
+    If the user is not a superuser, it returns a HTTP Forbidden response.
+    """
+
+    def test_func(self):
+        return self.request.user.is_superuser
+
+    def handle_no_permission(self):
+        """
+        Overrides the default behavior to return a redirect response
+        when the user does not have permission to access the view.
+        """
+        return redirect('account')
 
 
 class CreateUserView(APIView):
@@ -113,7 +132,7 @@ def custom_404(request, exception):
     return redirect('home')
 
 
-class BookCreateView(CreateView):
+class BookCreateView(IsSuperUserMixin, CreateView):
     """
     A view for creating a new book instance.
     Automatically generates a form for all fields of the `Book` model.
@@ -124,7 +143,7 @@ class BookCreateView(CreateView):
     success_url = reverse_lazy('account')
 
 
-class BookUpdateView(UpdateView):
+class BookUpdateView(IsSuperUserMixin, UpdateView):
     """
     A view for updating an existing book instance.
     Automatically generates a form for all fields of the `Book` model.
@@ -135,7 +154,7 @@ class BookUpdateView(UpdateView):
     success_url = reverse_lazy('account')
 
 
-class BookDeleteView(DeleteView):
+class BookDeleteView(IsSuperUserMixin, DeleteView):
     """
     A view for deleting an existing book instance.
     Asks for deletion confirmation from the user before proceeding.
