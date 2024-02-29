@@ -1,5 +1,9 @@
 {% extends "base_generic.html" %}
 
+{% block title %}
+  {% if object %}Modifier {{ object.title }}{% else %}Ajouter un livre{% endif %}
+{% endblock %}
+
 {% block content %}
   <h1>{% if object %}Modifier{% else %}Ajouter{% endif %} un livre</h1>
   <form method="post">

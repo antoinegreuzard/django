@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.views.generic import CreateView, UpdateView, DeleteView
+
 from rest_framework import status, generics
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 from rest_framework.response import Response
@@ -113,18 +114,33 @@ def custom_404(request, exception):
 
 
 class BookCreateView(CreateView):
+    """
+    A view for creating a new book instance.
+    Automatically generates a form for all fields of the `Book` model.
+    Redirects to the account page (`account`) after successful creation.
+    """
     model = Book
     fields = '__all__'
     success_url = reverse_lazy('account')
 
 
 class BookUpdateView(UpdateView):
+    """
+    A view for updating an existing book instance.
+    Automatically generates a form for all fields of the `Book` model.
+    Redirects to the account page (`account`) after successful update.
+    """
     model = Book
     fields = '__all__'
     success_url = reverse_lazy('account')
 
 
 class BookDeleteView(DeleteView):
+    """
+    A view for deleting an existing book instance.
+    Asks for deletion confirmation from the user before proceeding.
+    Redirects to the account page (`account`) after successful deletion.
+    """
     model = Book
     context_object_name = 'book'
     success_url = reverse_lazy('account')

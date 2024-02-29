@@ -58,7 +58,14 @@ class BookViewTests(APITestCase):
         get_user_model().objects.create_superuser(email=admin_email, password=admin_password)
 
         token_url = reverse('token_obtain_pair')
-        token_response = self.client.post(token_url, {'email': admin_email, 'password': admin_password}, format='json')
+        token_response = self.client.post(
+            token_url,
+            {
+                'email': admin_email,
+                'password': admin_password
+            },
+            format='json'
+        )
         self.assertEqual(token_response.status_code, status.HTTP_200_OK)
         access_token = token_response.data['access']
 
