@@ -62,7 +62,7 @@ class BookForm(forms.ModelForm):
         model = Book
         fields = '__all__'
         widgets = {
-            'date': forms.DateInput(format='%d %m %Y', attrs={'type': 'date'}),
+            'date': forms.DateInput(format='%d/%m/%Y', attrs={'type': 'date'}),
             'price': forms.NumberInput(),
             'rate': forms.NumberInput(attrs={'step': "0.01"}),
         }
