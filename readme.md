@@ -8,8 +8,8 @@ functionalities for user registration, login, and the ability to add, update, an
 To set up this project locally, follow these steps:
 
 ```bash
-git clone https://github.com/antoinegreuzard/django.git
-cd yourprojectname
+git clone https://github.com/antoinegreuzard/django.git library
+cd library
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver
