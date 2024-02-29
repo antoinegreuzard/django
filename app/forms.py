@@ -1,8 +1,11 @@
 """Module for defining authentication-related forms for the app."""
+import datetime
 
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import UserCreationForm
+from django.core.exceptions import ValidationError
+from django.forms import NumberInput, DateInput
 
 from app.models import Book
 
@@ -33,7 +36,7 @@ class UserRegisterForm(UserCreationForm):
         """Validate that the submitted email is not already in use."""
         email = self.cleaned_data.get('email')
         if User.objects.filter(email=email).exists():
-            raise forms.ValidationError("Un compte avec cet email existe déjà.")
+            raise ValidationError("Un compte avec cet email existe déjà.")
         return email
 
     def save(self, commit=True):
@@ -62,7 +65,25 @@ class BookForm(forms.ModelForm):
         model = Book
         fields = '__all__'
         widgets = {
-            'date': forms.DateInput(format='%d/%m/%Y', attrs={'type': 'date'}),
-            'price': forms.NumberInput(),
-            'rate': forms.NumberInput(attrs={'step': "0.01"}),
+            'date': DateInput(
+                format='%Y-%m-%d',
+                attrs={
+                    'type': 'date',
+                    'placeholder': 'YYYY-MM-DD'
+                }
+            ),
+            'price': NumberInput(),
+            'rate': NumberInput(attrs={'step': "0.01"}),
         }
+
+    def clean_date(self):
+        """
+        Validates and converts the date field from DD/MM/YYYY to a datetime.date object.
+        """
+        date = self.cleaned_data['date']
+        if isinstance(date, datetime.date):
+            return date
+        try:
+            return datetime.datetime.strptime(date, '%d/%m/%Y').date()
+        except ValueError as exc:
+            raise ValidationError("This date format is invalid. It should be in DD/MM/YYYY format.") from exc
