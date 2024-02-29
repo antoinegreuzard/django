@@ -7,9 +7,11 @@ from django.contrib.auth import authenticate, logout, login, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.shortcuts import redirect, render
+from django.views.generic import CreateView, UpdateView, DeleteView
 from rest_framework import status, generics
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 from rest_framework.response import Response
+from rest_framework.reverse import reverse_lazy
 from rest_framework.views import APIView
 
 from app.forms import UserLoginForm, UserRegisterForm
@@ -89,7 +91,8 @@ def logout_view(request):
 @login_required
 def account_view(request):
     """Display the account page for logged-in users."""
-    return render(request, "app/account.html")
+    books = Book.objects.all() if request.user.is_superuser else None
+    return render(request, "app/account.html", {'books': books})
 
 
 def home(request):
@@ -107,3 +110,21 @@ def home(request):
 def custom_404(request, exception):
     """Redirect to home page on 404 errors."""
     return redirect('home')
+
+
+class BookCreateView(CreateView):
+    model = Book
+    fields = '__all__'
+    success_url = reverse_lazy('account')
+
+
+class BookUpdateView(UpdateView):
+    model = Book
+    fields = '__all__'
+    success_url = reverse_lazy('account')
+
+
+class BookDeleteView(DeleteView):
+    model = Book
+    context_object_name = 'book'
+    success_url = reverse_lazy('account')

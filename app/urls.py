@@ -12,7 +12,10 @@ from app.views import CreateUserView, \
     register_view, \
     account_view, \
     BookListCreateAPIView, \
-    home
+    home, \
+    BookCreateView, \
+    BookUpdateView, \
+    BookDeleteView
 
 urlpatterns = [
     path('api/signup/', CreateUserView.as_view(), name='signup'),
@@ -20,6 +23,9 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('register/', register_view, name='register'),
     path('account/', account_view, name='account'),
-    path('api/books/', BookListCreateAPIView.as_view(), name='book-list-create'),
+    path('api/books/', BookListCreateAPIView.as_view(), name='book'),
+    path('account/books/create/', BookCreateView.as_view(), name='book-create'),
+    path('account/books/<int:pk>/update/', BookUpdateView.as_view(), name='book-update'),
+    path('account/books/<int:pk>/delete/', BookDeleteView.as_view(), name='book-delete'),
     path('', home, name='home'),
 ]

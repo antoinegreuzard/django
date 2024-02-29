@@ -46,7 +46,7 @@ class BookViewTests(APITestCase):
 
     def test_book_list(self):
         """Ensure the book list view returns a successful response and correct book data."""
-        url = reverse('book-list-create')
+        url = reverse('book')
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
@@ -62,7 +62,7 @@ class BookViewTests(APITestCase):
         self.assertEqual(token_response.status_code, status.HTTP_200_OK)
         access_token = token_response.data['access']
 
-        url = reverse('book-list-create')
+        url = reverse('book')
         book_data = {
             'title': "Another Test Book",
             'description': "Another Test Description",
