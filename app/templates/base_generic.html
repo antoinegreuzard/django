@@ -17,10 +17,10 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'account' %}">Mon Compte</a>
-        </li>
         {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'account' %}">Mon Compte</a>
+          </li>
           <li class="nav-item">
             <a href="{% url 'logout' %}" class="nav-link">Déconnexion</a>
           </li>
