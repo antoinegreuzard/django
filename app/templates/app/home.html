@@ -2,6 +2,16 @@
 
 {% block title %}Accueil{% endblock %}
 
+{% load static %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'app/css/home.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'app/js/home.js' %}"></script>
+{% endblock %}
+
 {% block content %}
   <h1>Liste des Livres</h1>
   <form id="searchForm" method="get" action="{% url 'home' %}" class="mb-4">
