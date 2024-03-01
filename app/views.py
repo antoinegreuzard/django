@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate, logout, login, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.db.models import Q
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.views.generic import CreateView, UpdateView, DeleteView
 
@@ -163,3 +164,13 @@ class BookDeleteView(IsSuperUserMixin, DeleteView):
     model = Book
     context_object_name = 'book'
     success_url = reverse_lazy('account')
+
+
+def search_autocomplete(request):
+    """
+    Display an optionnal autocompletion list
+    """
+    if 'term' in request.GET:
+        qs = Book.objects.filter(title__icontains=request.GET.get('term'))
+        titles = list(qs.values_list('title', flat=True))
+        return JsonResponse(titles, safe=False)

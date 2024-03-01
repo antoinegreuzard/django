@@ -4,10 +4,11 @@
 
 {% block content %}
   <h1>Liste des Livres</h1>
-  <form method="get" action="{% url 'home' %}" class="mb-4">
+  <form id="searchForm" method="get" action="{% url 'home' %}" class="mb-4">
     <div class="input-group mb-3">
-      <input type="text" class="form-control" name="q" placeholder="Rechercher un livre..." value="{{ request.GET.q }}">
-      <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Recherche</button>
+      <input type="text" class="form-control" name="q" placeholder="Rechercher un livre..." id="searchInput"
+             autocomplete="off">
+      <div id="autocomplete-list" class="autocomplete-items"></div>
     </div>
   </form>
   <div class="row">
