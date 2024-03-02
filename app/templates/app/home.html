@@ -4,12 +4,8 @@
 
 {% load static %}
 
-{% block extra_css %}
-  <link rel="stylesheet" href="{% static 'app/css/home.css' %}">
-{% endblock %}
-
 {% block extra_js %}
-  <script src="{% static 'app/js/home.js' %}"></script>
+  <script src="{% static 'app/bundles/home.bundle.js' %}"></script>
 {% endblock %}
 
 {% block content %}

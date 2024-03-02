@@ -81,9 +81,13 @@ AUTH_USER_MODEL = 'app.CustomUser'
 
 LOGIN_URL = 'login'
 
-STATICFILES_DIRS = [BASE_DIR / "static", ]
-
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases

@@ -1,3 +1,5 @@
+import '../css/home.css';
+
 function debounce(func, wait) {
   let timeout;
   return function debounced(...args) {

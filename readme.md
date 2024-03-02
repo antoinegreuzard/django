@@ -11,9 +11,10 @@ To set up this project locally, follow these steps:
 git clone https://github.com/antoinegreuzard/django.git library
 cd library
 pip install -r requirements.txt
+npm install
 python manage.py migrate
+npm run build
 python manage.py collectstatic
-python manage.py runserver
 ```
 
 ## Usage
@@ -23,6 +24,7 @@ python manage.py runserver
 After installation, you can run the project locally:
 
 ```bash
+npm run dev
 python manage.py runserver
 ```
 

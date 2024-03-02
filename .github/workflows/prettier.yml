@@ -15,4 +15,4 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Check formatting with Prettier
-        run: npx prettier --check "app/**/*{.js,.css}"
+        run: npx prettier --check "app/**/*{.js,.css}" "!app/static/app/bundles/*.{js}"
