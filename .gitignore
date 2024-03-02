@@ -12,3 +12,4 @@ db.sqlite3
 /.vscode/
 *.idea/
 /staticfiles
+/node_modules

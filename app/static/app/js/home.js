@@ -1,20 +1,20 @@
 function debounce(func, wait) {
   let timeout;
-  return function () {
-    const context = this, args = arguments;
+  return function debounced(...args) {
+    const context = this;
     clearTimeout(timeout);
     timeout = setTimeout(() => func.apply(context, args), wait);
   };
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-  const searchInput = document.getElementById('searchInput');
+document.addEventListener('DOMContentLoaded', function onDOMContentLoaded() {
+  const searchInput = document.getElementById('search-input');
   const autocompleteList = document.getElementById('autocomplete-list');
   const searchForm = document.getElementById('searchForm');
 
   if (!searchInput || !autocompleteList || !searchForm) return;
 
-  const fetchAutocompleteData = debounce(function (input) {
+  const fetchAutocompleteData = debounce(function fetchAutocomplete(input) {
     if (!input) {
       autocompleteList.innerHTML = '';
       searchInput.style.borderBottomLeftRadius = '';
@@ -28,13 +28,13 @@ document.addEventListener('DOMContentLoaded', function () {
     autocompleteList.style.borderWidth = '1px';
 
     fetch(`/api/search-autocomplete/?term=${input}`)
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         autocompleteList.innerHTML = '';
-        data.forEach(item => {
+        data.forEach((item) => {
           const div = document.createElement('div');
           div.textContent = item;
-          div.addEventListener('click', function () {
+          div.addEventListener('click', function onItemClick() {
             searchInput.value = this.textContent;
             autocompleteList.innerHTML = '';
             searchForm.submit();
@@ -42,10 +42,10 @@ document.addEventListener('DOMContentLoaded', function () {
           autocompleteList.appendChild(div);
         });
       })
-      .catch(error => console.error('Error:', error));
+      .catch((error) => console.error('Error:', error));
   }, 250);
 
-  searchInput.addEventListener('input', function () {
+  searchInput.addEventListener('input', function onInput() {
     fetchAutocompleteData(this.value);
   });
 });

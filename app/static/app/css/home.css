@@ -1,4 +1,4 @@
-#searchInput {
+#search-input {
   border-radius: var(--bs-border-radius);
 }
 
@@ -11,8 +11,7 @@
   left: 0;
   right: 0;
   max-height: 200px;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden auto;
   background-color: #fff;
 }
 

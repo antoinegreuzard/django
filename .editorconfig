@@ -1,0 +1,32 @@
+# Fichier .editorconfig de base
+
+# Indique qu'il s'agit de la racine d'un fichier .editorconfig
+root = true
+
+# Règles par défaut pour tous les fichiers
+[*]
+charset = utf-8 # Encodage des fichiers
+end_of_line = lf # Fin de ligne (lf, crlf)
+insert_final_newline = true # Insère une nouvelle ligne à la fin du fichier
+trim_trailing_whitespace = true # Supprime les espaces en fin de ligne
+
+# Configuration spécifique aux fichiers Python
+[*.py]
+indent_style = space # Utilise des espaces pour l'indentation
+indent_size = 4 # 4 espaces par niveau d'indentation
+max_line_length = 79 # Longueur maximale de ligne pour Python PEP 8
+
+# Configuration pour les fichiers JavaScript
+[*.{js,jsx}]
+indent_style = space # Utilise des espaces pour l'indentation
+indent_size = 2 # 2 espaces par niveau d'indentation, style Airbnb
+max_line_length = 100 # Longueur maximale de ligne
+
+# Configuration pour les fichiers HTML et CSS
+[*.{html,css}]
+indent_style = space # Utilise des espaces pour l'indentation
+indent_size = 2 # 2 espaces par niveau d'indentation
+
+# Configuration pour les fichiers de markdown
+[*.md]
+trim_trailing_whitespace = false
