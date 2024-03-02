@@ -9,7 +9,7 @@
     "lint:css:fix": "stylelint 'app/**/*.css' !'app/static/app/bundles/*.css' --fix",
     "lint": "eslint app --ext .js",
     "lint:fix": "eslint app --ext .js --fix",
-    "prettier": "prettier --write 'app/static/app/*.{js,css}' '!app/static/app/bundles/*.{js}'",
+    "prettier": "prettier --write 'app/static/app/*.{js,css}'",
     "fix": "npm run lint:fix && npm run lint:css:fix && npm run prettier",
     "build": "webpack --mode production",
     "dev": "webpack --mode development --watch"
