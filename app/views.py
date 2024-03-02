@@ -121,7 +121,8 @@ def home(request):
     query: object = request.GET.get('q', '')
     if query:
         books = Book.objects.filter(
-            Q(title__icontains=query) | Q(description__icontains=query) | Q(author__icontains=query)
+            Q(title__icontains=query) | Q(description__icontains=query) | Q(
+                author__icontains=query)
         )
     else:
         books = Book.objects.all()

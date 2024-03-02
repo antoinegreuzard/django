@@ -26,7 +26,8 @@ class UserRegisterForm(UserCreationForm):
     Extends Django's UserCreationForm to include email field and custom validation.
     """
 
-    email = forms.EmailField(required=True, help_text="Required. Add a valid email address.")
+    email = forms.EmailField(required=True,
+                             help_text="Required. Add a valid email address.")
 
     class Meta(UserCreationForm.Meta):
         model = User
@@ -86,4 +87,5 @@ class BookForm(forms.ModelForm):
         try:
             return datetime.datetime.strptime(date, '%d/%m/%Y').date()
         except ValueError as exc:
-            raise ValidationError("This date format is invalid. It should be in DD/MM/YYYY format.") from exc
+            raise ValidationError(
+                "This date format is invalid. It should be in DD/MM/YYYY format.") from exc
