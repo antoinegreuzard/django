@@ -13,3 +13,4 @@ db.sqlite3
 *.idea/
 /staticfiles
 /node_modules
+/.fleet
