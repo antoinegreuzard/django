@@ -8,7 +8,7 @@ import datetime
 import django
 
 # Configuring Django to execute commands outside of a server environment
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'your_project_name.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'server.settings')
 django.setup()
 
 from app.models import Book
