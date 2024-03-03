@@ -3,57 +3,37 @@ Views module for handling requests related to
 user authentication and application functionality.
 """
 
-from django.contrib.auth import authenticate, logout, login, get_user_model
+from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
+from django.db import IntegrityError
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
+from django.urls import reverse_lazy
 from django.views.decorators.csrf import ensure_csrf_cookie
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_http_methods
 from django.views.generic import CreateView, UpdateView, DeleteView
-
-from rest_framework import status, generics
-from rest_framework.permissions import BasePermission, SAFE_METHODS
+from rest_framework import generics, status
+from rest_framework.permissions import IsAdminUser, SAFE_METHODS
 from rest_framework.response import Response
-from rest_framework.reverse import reverse_lazy
 from rest_framework.views import APIView
 
 from app.forms import UserLoginForm, UserRegisterForm, BookForm
 from app.models import Book, Category
 from app.serializers import UserSerializer, BookSerializer
 
-User = get_user_model()
 
-
-class IsAdminOrReadOnly(BasePermission):
+class IsAdminOrReadOnly(IsAdminUser):
     """
     Custom permission to only allow admin users to edit or delete objects.
     """
 
     def has_permission(self, request, view):
-        if request.method in SAFE_METHODS:
-            return True
-        return request.user and request.user.is_staff
-
-
-class IsSuperUserMixin(UserPassesTestMixin):
-    """
-    Mixin to check if the user is a superuser.
-    It overrides the test_func to verify superuser status.
-    If the user is not a superuser, it returns a HTTP Forbidden response.
-    """
-
-    def test_func(self):
-        return self.request.user.is_superuser
-
-    def handle_no_permission(self):
-        """
-        Overrides the default behavior to return a redirect response
-        when the user does not have permission to access the view.
-        """
-        return redirect('account')
+        is_admin = super().has_permission(request, view)
+        return request.method in SAFE_METHODS or is_admin
 
 
 class CreateUserView(APIView):
@@ -61,7 +41,6 @@ class CreateUserView(APIView):
 
     @staticmethod
     def post(request):
-        """Handle POST request to create a new user."""
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -71,7 +50,6 @@ class CreateUserView(APIView):
 
 class BookListCreateAPIView(generics.ListCreateAPIView):
     """API view for listing and creating books."""
-
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [IsAdminOrReadOnly]
@@ -79,17 +57,16 @@ class BookListCreateAPIView(generics.ListCreateAPIView):
 
 def login_view(request):
     """Handle user login requests."""
-    if request.user.is_authenticated:
-        return redirect('account')
     if request.method == "POST":
         form = UserLoginForm(request.POST)
         if form.is_valid():
-            email = form.cleaned_data.get('email')
-            password = form.cleaned_data.get('password')
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
             user = authenticate(request, email=email, password=password)
-            if user is not None:
+            if user:
                 login(request, user)
                 return redirect('account')
+            form.add_error(None, "Invalid credentials")
     else:
         form = UserLoginForm()
     return render(request, "app/login.html", {'form': form})
@@ -97,15 +74,17 @@ def login_view(request):
 
 def register_view(request):
     """Handle user registration requests."""
-    if request.user.is_authenticated:
-        return redirect('account')
-    form = UserRegisterForm(request.POST or None)
-    if form.is_valid():
-        form.save()
-        return redirect('login')
+    if request.method == "POST":
+        form = UserRegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = UserRegisterForm()
     return render(request, "app/register.html", {'form': form})
 
 
+@login_required
 def logout_view(request):
     """Log out the current user."""
     logout(request)
@@ -115,97 +94,86 @@ def logout_view(request):
 @login_required
 def account_view(request):
     """Display the account page for logged-in users."""
-    books = Book.objects.all() if request.user.is_superuser else None
+    books = Book.objects.filter(
+        author=request.user
+    ) if not request.user.is_superuser else Book.objects.all()
     return render(request, "app/account.html", {'books': books})
 
 
 def home(request):
     """Display the home page with an optional search query."""
     query = request.GET.get('q', '')
-    if query:
-        book_list = Book.objects.filter(
-            Q(title__icontains=query) | Q(description__icontains=query) | Q(
-                author__icontains=query)
-        )
-    else:
-        book_list = Book.objects.all()
-
-    paginator = Paginator(book_list, 10)
+    books = Book.objects.filter(
+        Q(title__icontains=query) | Q(description__icontains=query) | Q(
+            author__icontains=query))
+    paginator = Paginator(books, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-
     return render(request, "app/home.html",
                   {'page_obj': page_obj, 'query': query})
+
+
+class BookCRUDMixin(LoginRequiredMixin, UserPassesTestMixin):
+    """Mixin to check user permissions for book CRUD operations."""
+    model = Book
+    form_class = BookForm
+    success_url = reverse_lazy('account')
+
+    def test_func(self):
+        return self.request.user.is_superuser
+
+
+class BookCreateView(BookCRUDMixin, CreateView):
+    """A view for creating a new book instance."""
+
+
+class BookUpdateView(BookCRUDMixin, UpdateView):
+    """A view for updating an existing book instance."""
+
+
+class BookDeleteView(BookCRUDMixin, DeleteView):
+    """A view for deleting an existing book instance."""
+    template_name = 'app/book_confirm_delete.html'
+
+
+@require_http_methods(["GET"])
+def search_autocomplete(request):
+    """Provide autocomplete suggestions for book search."""
+    if 'term' in request.GET:
+        qs = Book.objects.filter(title__icontains=request.GET['term'])
+        titles = list(qs.values_list('title', flat=True))
+        return JsonResponse(titles, safe=False)
+    return JsonResponse([], safe=False)
+
+
+@ensure_csrf_cookie
+@require_POST
+@login_required
+def add_category(request):
+    """Add a new book category."""
+    if not request.user.is_superuser:
+        return JsonResponse({"error": "Authorization denied."}, status=403)
+
+    try:
+        import json
+        data = json.loads(request.body)
+        category_name = data.get('categoryName', '').strip()
+        if not category_name:
+            return JsonResponse({"error": "Category name cannot be empty."},
+                                status=400)
+
+        Category.objects.create(name=category_name)
+        return JsonResponse({"success": "Category successfully added."},
+                            status=201)
+    except IntegrityError:
+        return JsonResponse(
+            {"error": "A category with that name already exists."}, status=400)
+    except ValidationError as e:
+        return JsonResponse({"error": str(e)}, status=400)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON data."}, status=400)
 
 
 def custom_404(request, exception):
     """Redirect to home page on 404 errors."""
     return redirect('home')
-
-
-class BookCreateView(IsSuperUserMixin, CreateView):
-    """
-    A view for creating a new book instance.
-    Automatically generates a form for all fields of the `Book` model.
-    Redirects to the account page (`account`) after successful creation.
-    """
-    model = Book
-    form_class = BookForm
-    success_url = reverse_lazy('account')
-
-
-class BookUpdateView(IsSuperUserMixin, UpdateView):
-    """
-    A view for updating an existing book instance.
-    Automatically generates a form for all fields of the `Book` model.
-    Redirects to the account page (`account`) after successful update.
-    """
-    model = Book
-    form_class = BookForm
-    success_url = reverse_lazy('account')
-
-
-class BookDeleteView(IsSuperUserMixin, DeleteView):
-    """
-    A view for deleting an existing book instance.
-    Asks for deletion confirmation from the user before proceeding.
-    Redirects to the account page (`account`) after successful deletion.
-    """
-    model = Book
-    context_object_name = 'book'
-    success_url = reverse_lazy('account')
-
-
-def search_autocomplete(request):
-    """
-    Display an optionnal autocompletion list
-    """
-    if 'term' in request.GET:
-        qs = Book.objects.filter(title__icontains=request.GET.get('term'))
-        titles = list(qs.values_list('title', flat=True))
-        return JsonResponse(titles, safe=False)
-
-
-@ensure_csrf_cookie
-@login_required
-@require_POST
-def add_category(request):
-    if not request.user.is_superuser:
-        return JsonResponse({"error": "Autorisation refusée."}, status=403)
-
-    try:
-        import json
-        data = json.loads(request.body)
-        category_name = data.get('categoryName')
-        if not category_name:
-            return JsonResponse(
-                {"error": "Le nom de la catégorie ne peut pas être vide."},
-                status=400)
-
-        Category.objects.create(name=category_name)
-        return JsonResponse({"success": "Catégorie ajoutée avec succès."},
-                            status=201)
-    except Exception as e:
-        return JsonResponse({
-            "error": "Une erreur est survenue lors de l'ajout de la catégorie."},
-            status=500)
