@@ -3,7 +3,6 @@
 {% block title %}Accueil{% endblock %}
 
 {% load static %}
-
 {% block extra_js %}
   <script src="{% static 'app/bundles/home.bundle.js' %}"></script>
 {% endblock %}
@@ -28,6 +27,11 @@
             <p class="card-text">Prix: {{ book.price }} €</p>
             <p class="card-text">Date de publication: {{ book.date|date:"d F Y" }}</p>
             <p class="card-text">Note: {{ book.rate }}/5</p>
+            <p class="card-text">Catégories:
+              {% for category in book.categories.all %}
+                {{ category.name }}{% if not forloop.last %}, {% endif %}
+              {% endfor %}
+            </p>
           </div>
         </div>
       </div>

@@ -10,6 +10,8 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.http import require_POST
 from django.views.generic import CreateView, UpdateView, DeleteView
 
 from rest_framework import status, generics
@@ -19,7 +21,7 @@ from rest_framework.reverse import reverse_lazy
 from rest_framework.views import APIView
 
 from app.forms import UserLoginForm, UserRegisterForm, BookForm
-from app.models import Book
+from app.models import Book, Category
 from app.serializers import UserSerializer, BookSerializer
 
 User = get_user_model()
@@ -182,3 +184,28 @@ def search_autocomplete(request):
         qs = Book.objects.filter(title__icontains=request.GET.get('term'))
         titles = list(qs.values_list('title', flat=True))
         return JsonResponse(titles, safe=False)
+
+
+@ensure_csrf_cookie
+@login_required
+@require_POST
+def add_category(request):
+    if not request.user.is_superuser:
+        return JsonResponse({"error": "Autorisation refusée."}, status=403)
+
+    try:
+        import json
+        data = json.loads(request.body)
+        category_name = data.get('categoryName')
+        if not category_name:
+            return JsonResponse(
+                {"error": "Le nom de la catégorie ne peut pas être vide."},
+                status=400)
+
+        Category.objects.create(name=category_name)
+        return JsonResponse({"success": "Catégorie ajoutée avec succès."},
+                            status=201)
+    except Exception as e:
+        return JsonResponse({
+            "error": "Une erreur est survenue lors de l'ajout de la catégorie."},
+            status=500)

@@ -61,6 +61,13 @@ class CustomUser(AbstractUser):
     objects = CustomUserManager()
 
 
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
 class Book(models.Model):
     """
     Model representing a book with title,
@@ -73,6 +80,7 @@ class Book(models.Model):
     author = models.CharField(max_length=255)
     date = models.DateField()
     rate = models.DecimalField(max_digits=3, decimal_places=2)
+    categories = models.ManyToManyField(Category, related_name='books')
 
     def __str__(self):
         return self.title

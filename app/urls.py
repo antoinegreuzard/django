@@ -16,7 +16,7 @@ from app.views import CreateUserView, \
     BookCreateView, \
     BookUpdateView, \
     BookDeleteView, \
-    search_autocomplete
+    search_autocomplete, add_category
 
 urlpatterns = [
     path('api/signup/', CreateUserView.as_view(), name='signup'),
@@ -33,5 +33,6 @@ urlpatterns = [
          name='book-delete'),
     path('api/search-autocomplete/', search_autocomplete,
          name='search-autocomplete'),
+    path('api/category/', add_category, name='category'),
     path('', home, name='home'),
 ]

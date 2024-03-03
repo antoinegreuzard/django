@@ -15,4 +15,4 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Run Stylelint
-        run: npx stylelint "app/**/*.css" !"app/static/app/bundles/*.css"
+        run: npx stylelint 'app/**/*.css' !'app/static/app/bundles/*.css'

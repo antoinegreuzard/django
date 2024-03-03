@@ -7,7 +7,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 from django.forms import NumberInput, DateInput
 
-from app.models import Book
+from app.models import Book, Category
 
 User = get_user_model()
 
@@ -23,7 +23,8 @@ class UserRegisterForm(UserCreationForm):
     """
     Form for handling new user registration.
 
-    Extends Django's UserCreationForm to include email field and custom validation.
+    Extends Django's UserCreationForm to include email field and custom
+    validation.
     """
 
     email = forms.EmailField(required=True,
@@ -58,9 +59,16 @@ class BookForm(forms.ModelForm):
     """
     Form for creating and updating Book instances.
 
-    Uses custom widgets to enhance the user interface, including a date picker for the 'date' field,
-    and number inputs for 'price' and 'rate' fields to ensure proper data formatting.
+    Uses custom widgets to enhance the user interface, including a date
+    picker for the 'date' field, and number inputs for 'price' and 'rate'
+    fields to ensure proper data formatting.
     """
+
+    categories = forms.ModelMultipleChoiceField(
+        queryset=Category.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
 
     class Meta:
         model = Book
@@ -76,16 +84,3 @@ class BookForm(forms.ModelForm):
             'price': NumberInput(),
             'rate': NumberInput(attrs={'step': "0.01"}),
         }
-
-    def clean_date(self):
-        """
-        Validates and converts the date field from DD/MM/YYYY to a datetime.date object.
-        """
-        date = self.cleaned_data['date']
-        if isinstance(date, datetime.date):
-            return date
-        try:
-            return datetime.datetime.strptime(date, '%d/%m/%Y').date()
-        except ValueError as exc:
-            raise ValidationError(
-                "This date format is invalid. It should be in DD/MM/YYYY format.") from exc
