@@ -12,13 +12,13 @@
   <h1>Liste des Livres</h1>
   <form id="searchForm" method="get" action="{% url 'home' %}" class="mb-4">
     <div class="input-group mb-3">
-      <input type="text" class="form-control" name="q" placeholder="Rechercher un livre..." id="search-input"
-             autocomplete="off">
+      <input type="text" class="form-control" name="q" placeholder="Rechercher un livre..." value="{{ query }}"
+             id="search-input" autocomplete="off">
       <div id="autocomplete-list" class="autocomplete-items"></div>
     </div>
   </form>
   <div class="row">
-    {% for book in books %}
+    {% for book in page_obj %}
       <div class="col-md-4">
         <div class="card mb-4">
           <div class="card-body">
@@ -32,5 +32,20 @@
         </div>
       </div>
     {% endfor %}
+  </div>
+  <div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+          <a href="?q={{ query }}&page=1">&laquo; première</a>
+          <a href="?q={{ query }}&page={{ page_obj.previous_page_number }}">précédente</a>
+        {% endif %}
+      <span class="current">
+            Page {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+      </span>
+      {% if page_obj.has_next %}
+        <a href="?q={{ query }}&page={{ page_obj.next_page_number }}">suivante</a>
+        <a href="?q={{ query }}&page={{ page_obj.paginator.num_pages }}">dernière &raquo;</a>
+      {% endif %}
+    </span>
   </div>
 {% endblock %}

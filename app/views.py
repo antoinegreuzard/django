@@ -6,6 +6,7 @@ user authentication and application functionality.
 from django.contrib.auth import authenticate, logout, login, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
@@ -118,15 +119,21 @@ def account_view(request):
 
 def home(request):
     """Display the home page with an optional search query."""
-    query: object = request.GET.get('q', '')
+    query = request.GET.get('q', '')
     if query:
-        books = Book.objects.filter(
+        book_list = Book.objects.filter(
             Q(title__icontains=query) | Q(description__icontains=query) | Q(
                 author__icontains=query)
         )
     else:
-        books = Book.objects.all()
-    return render(request, "app/home.html", {'books': books, 'query': query})
+        book_list = Book.objects.all()
+
+    paginator = Paginator(book_list, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "app/home.html",
+                  {'page_obj': page_obj, 'query': query})
 
 
 def custom_404(request, exception):
