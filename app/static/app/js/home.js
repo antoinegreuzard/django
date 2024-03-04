@@ -2,21 +2,21 @@ import '../css/home.css';
 
 function debounce(func, wait) {
   let timeout;
-  return function debounced(...args) {
+  return (...args) => {
     const context = this;
     clearTimeout(timeout);
     timeout = setTimeout(() => func.apply(context, args), wait);
   };
 }
 
-document.addEventListener('DOMContentLoaded', function onDOMContentLoaded() {
+document.addEventListener('DOMContentLoaded', () => {
   const searchInput = document.getElementById('search-input');
   const autocompleteList = document.getElementById('autocomplete-list');
   const searchForm = document.getElementById('searchForm');
 
   if (!searchInput || !autocompleteList || !searchForm) return;
 
-  const fetchAutocompleteData = debounce(function fetchAutocomplete(input) {
+  const fetchAutocompleteData = debounce((input) => {
     if (!input) {
       autocompleteList.innerHTML = '';
       searchInput.style.borderBottomLeftRadius = '';
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function onDOMContentLoaded() {
         data.forEach((item) => {
           const div = document.createElement('div');
           div.textContent = item;
-          div.addEventListener('click', function onItemClick() {
+          div.addEventListener('click', () => {
             searchInput.value = this.textContent;
             autocompleteList.innerHTML = '';
             searchForm.submit();
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function onDOMContentLoaded() {
       .catch((error) => console.error('Error:', error));
   }, 250);
 
-  searchInput.addEventListener('input', function onInput() {
+  searchInput.addEventListener('input', () => {
     fetchAutocompleteData(this.value);
   });
 });
