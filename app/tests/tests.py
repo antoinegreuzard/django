@@ -1,3 +1,11 @@
+"""
+Module containing test cases for the app.
+
+This module includes classes and methods for testing user authentication,
+book management functionalities, and view responses to ensure that the
+application behaves as expected under various conditions.
+"""
+
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
@@ -13,7 +21,9 @@ class UserViewTests(TestCase):
     """Test cases for user-related views."""
 
     def test_create_user(self):
-        """Ensure that a user can be created successfully."""
+        """
+        Ensure that a user can be created successfully.
+        """
         url = reverse('signup')
         data = {'email': 'test@example.com', 'password': 'testpassword123'}
         response = self.client.post(url, data)
@@ -22,7 +32,9 @@ class UserViewTests(TestCase):
 
 
 class BookViewTests(APITestCase):
-    """Test cases for book-related views."""
+    """
+    Test cases for book-related views.
+    """
 
     @classmethod
     def setUpTestData(cls):
@@ -46,6 +58,9 @@ class BookViewTests(APITestCase):
             cls.categories[:2])
 
     def test_book_list(self):
+        """
+        Test the book list view to ensure it returns at least one book.
+        """
         url = reverse('book')
         response = self.client.get(url)
         print(response.data)  # Afficher pour le diagnostic
@@ -55,7 +70,9 @@ class BookViewTests(APITestCase):
         self.assertTrue(len(books_data) >= 1)
 
     def test_create_book_with_categories(self):
-        """Ensure that a book can be created with categories."""
+        """
+        Ensure that a book can be created with categories.
+        """
         self.client.force_authenticate(user=self.user)
         url = reverse('book')
         category_ids = [category.id for category in self.categories]

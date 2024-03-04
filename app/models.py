@@ -54,6 +54,12 @@ class CustomUser(AbstractUser):
 
 
 class Category(models.Model):
+    """
+    Represents a book category.
+
+    Attributes:
+        name (models.CharField): The name of the category.
+    """
     name = models.CharField(max_length=100)
 
     def __str__(self):

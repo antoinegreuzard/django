@@ -2,7 +2,7 @@
 Views module for handling requests related to
 user authentication and application functionality.
 """
-
+import json
 from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -41,6 +41,12 @@ class CreateUserView(APIView):
 
     @staticmethod
     def post(request):
+        """
+        Create a new user instance.
+
+        Validates the request data using the UserSerializer and creates a new user if the data is valid.
+        Returns HTTP 201 Created on success, or HTTP 400 Bad Request if the data is invalid.
+        """
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -155,7 +161,6 @@ def add_category(request):
         return JsonResponse({"error": "Authorization denied."}, status=403)
 
     try:
-        import json
         data = json.loads(request.body)
         category_name = data.get('categoryName', '').strip()
         if not category_name:

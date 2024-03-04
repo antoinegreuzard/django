@@ -25,8 +25,6 @@ class CustomFormMixin:
             FileInput
         )
         for field_name, field in self.fields.items():
-            # Vérifie si le widget du champ actuel est dans la liste des
-            # widgets à exclure
             if not isinstance(field.widget, exclude_widgets):
                 css_class = field.widget.attrs.get('class', '')
                 field.widget.attrs[
