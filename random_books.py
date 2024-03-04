@@ -1,9 +1,8 @@
-"""
-This script is designed to populate the database with fake data for testing purposes.
-It uses the Django ORM to create and add categories and books with realistic but fake data.
-This facilitates testing and development by providing a way to quickly generate data
-within the database without manual input.
-"""
+"""This script is designed to populate the database with fake data for
+testing purposes. It uses the Django ORM to create and add categories and
+books with realistic but fake data. This facilitates testing and development
+by providing a way to quickly generate data within the database without
+manual input."""
 
 import os
 import random
@@ -36,7 +35,8 @@ def add_categories():
 def add_books():
     """
     Creates and adds 20 books to the database with fake but realistic data.
-    Each book is randomly assigned 1 to 3 categories from the existing categories in the database.
+    Each book is randomly assigned 1 to 3 categories from the existing
+    categories in the database.
     """
     categories = list(Category.objects.all())
 
