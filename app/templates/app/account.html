@@ -23,6 +23,7 @@
               <div class="card">
                 <div class="card-body">
                   <h5 class="card-title">{{ book.title }}</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">Auteur: {{ book.author }}</h6>
                   <a href="{% url 'book-update' book.id %}" class="btn btn-primary">Modifier</a>
                   <a href="{% url 'book-delete' book.id %}" class="btn btn-danger">Supprimer</a>
                 </div>
