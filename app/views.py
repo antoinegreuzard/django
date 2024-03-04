@@ -3,6 +3,8 @@ Views module for handling requests related to
 user authentication and application functionality.
 """
 import json
+import logging
+
 from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -25,6 +27,8 @@ from app.forms import UserLoginForm, UserRegisterForm, BookForm
 from app.models import Book, Category
 from app.serializers import UserSerializer, BookSerializer
 
+logger = logging.getLogger(__name__)
+
 
 class IsAdminOrReadOnly(IsAdminUser):
     """
@@ -44,8 +48,9 @@ class CreateUserView(APIView):
         """
         Create a new user instance.
 
-        Validates the request data using the UserSerializer and creates a new user if the data is valid.
-        Returns HTTP 201 Created on success, or HTTP 400 Bad Request if the data is invalid.
+        Validates the request data using the UserSerializer and creates a
+        new user if the data is valid. Returns HTTP 201 Created on success,
+        or HTTP 400 Bad Request if the data is invalid.
         """
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
@@ -174,8 +179,10 @@ def add_category(request):
         return JsonResponse(
             {"error": "A category with that name already exists."}, status=400)
     except ValidationError as e:
-        return JsonResponse({"error": str(e)}, status=400)
+        logger.error("Validation error while adding a new category: %s", e)
+        return JsonResponse({"error": "Invalid data provided."}, status=400)
     except json.JSONDecodeError:
+        logger.error("JSON decode error in add_category")
         return JsonResponse({"error": "Invalid JSON data."}, status=400)
 
 
