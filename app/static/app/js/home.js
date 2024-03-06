@@ -12,9 +12,9 @@ function debounce(func, wait) {
 document.addEventListener('DOMContentLoaded', () => {
   const searchInput = document.getElementById('search-input');
   const autocompleteList = document.getElementById('autocomplete-list');
-  const searchForm = document.getElementById('searchForm');
+  const searchAndSortForm = document.getElementById('searchAndSortForm');
 
-  if (!searchInput || !autocompleteList || !searchForm) return;
+  if (!searchInput || !autocompleteList || !searchAndSortForm) return;
 
   const fetchAutocompleteData = debounce((input) => {
     if (!input) {
@@ -37,9 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
           const div = document.createElement('div');
           div.textContent = item;
           div.addEventListener('click', () => {
-            searchInput.value = this.textContent;
+            searchInput.value = div.textContent;
             autocompleteList.innerHTML = '';
-            searchForm.submit();
+            searchAndSortForm.submit();
           });
           autocompleteList.appendChild(div);
         });
@@ -48,6 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }, 250);
 
   searchInput.addEventListener('input', () => {
-    fetchAutocompleteData(this.value);
+    fetchAutocompleteData(searchInput.value);
   });
 });
