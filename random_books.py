@@ -68,11 +68,12 @@ def add_books_and_categories():
                 start_date='-10y', end_date='today'
             ).isoformat()
 
+        description = f"This book, titled '{data['title']}', was first published in {first_publish_year}. It covers the following subjects: {subjects}. Written by {authors}."
+
         book, created = Book.objects.get_or_create(
             title=data['title'],
             defaults={
-                'description': authors_names + "- No detailed description "
-                                               "available.",
+                'description': description
                 'price': round(fake.pydecimal(left_digits=2, right_digits=2,
                                               positive=True, min_value=5,
                                               max_value=50), 2),
