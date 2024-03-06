@@ -73,7 +73,7 @@ def add_books_and_categories():
         book, created = Book.objects.get_or_create(
             title=data['title'],
             defaults={
-                'description': description
+                'description': description,
                 'price': round(fake.pydecimal(left_digits=2, right_digits=2,
                                               positive=True, min_value=5,
                                               max_value=50), 2),
