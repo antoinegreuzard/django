@@ -70,7 +70,7 @@ def add_books_and_categories():
 
         description = (f"Ce livre, intitulé '{data['title']}', a été publié "
                        f"pour la première fois en {first_publish_year}."
-                       f"Écrit par {authors}.")
+                       f"Écrit par {authors_names}.")
 
         book, created = Book.objects.get_or_create(
             title=data['title'],
