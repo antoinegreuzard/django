@@ -56,7 +56,7 @@ def add_books_and_categories():
 
         authors = data.get('authors', [])
         authors_names = ', '.join([author['name'] for author in authors])
-        subjects = ', '.join(book_subjects)
+        subjects = ', '.join(categories)
 
         first_publish_year = data.get('first_publish_year', None)
 
