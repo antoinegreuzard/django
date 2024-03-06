@@ -1,12 +1,7 @@
-"""This script is designed to populate the database with fake data for
-testing purposes. It uses the Django ORM to create and add categories and
-books with realistic but fake data. This facilitates testing and development
-by providing a way to quickly generate data within the database without
-manual input."""
-
 import os
 import random
 
+import requests
 import django
 from faker import Faker
 
@@ -19,44 +14,79 @@ from app.models import Book, Category
 fake = Faker()
 
 
-def add_categories():
+def fetch_books():
     """
-    Creates and adds 5 categories to the database with fake but realistic data
+    Fetches books data from the Open Library API.
     """
-    category_names = set()
-    while len(category_names) < 5:
-        category_names.add(fake.unique.word().capitalize())
+    response = requests.get(
+        'http://openlibrary.org/subjects/programming.json?published_in=2000'
+        '-2024&limit=50')
+    if response.status_code == 200:
+        return response.json()['works']
+    else:
+        print("Failed to fetch data")
+        return []
 
-    for name in category_names:
-        category = Category.objects.create(name=name)
-        print(f'Category {category.name} added.')
 
-
-def add_books():
+def is_french(subject):
     """
-    Creates and adds 20 books to the database with fake but realistic data.
-    Each book is randomly assigned 1 to 3 categories from the existing
-    categories in the database.
+    Determines if a given subject/category name is likely to be in French.
     """
-    categories = list(Category.objects.all())
+    french_keywords = ['programmation', 'ingénierie', 'logiciel', 'systèmes',
+                       'informatique']
+    return any(keyword in subject.lower() for keyword in french_keywords)
 
-    for _ in range(20):
-        book = Book.objects.create(
-            title=fake.sentence(nb_words=5),
-            description=fake.text(max_nb_chars=200),
-            price=round(random.uniform(5.99, 50.99), 2),
-            author=fake.name(),
-            date=fake.date_between(start_date='-10y', end_date='today'),
-            rate=round(random.uniform(0, 5), 2),
+
+def add_books_and_categories():
+    """
+    Adds books and their categories to the database using data fetched from
+    the Open Library API and generates fake price and rate for each book
+    using Faker.
+    """
+    books_data = fetch_books()
+    for data in books_data:
+        book_subjects = data.get('subject', [])
+        categories = []
+        for subject_name in book_subjects:
+            if is_french(subject_name):
+                category, _ = Category.objects.get_or_create(name=subject_name)
+                categories.append(category)
+
+        authors = data.get('authors', [])
+        authors_names = ', '.join([author['name'] for author in authors])
+
+        first_publish_year = data.get('first_publish_year', None)
+
+        if first_publish_year:
+            random_month = random.randint(1, 12)
+            random_day = random.randint(1, 28)
+            date_str = f"{first_publish_year}-{random_month:02d}-{random_day:02d}"
+        else:
+            date_str = fake.date_between(
+                start_date='-10y', end_date='today'
+            ).isoformat()
+
+        book, created = Book.objects.get_or_create(
+            title=data['title'],
+            defaults={
+                'description': authors_names + "- No detailed description "
+                                               "available.",
+                'price': round(fake.pydecimal(left_digits=2, right_digits=2,
+                                              positive=True, min_value=5,
+                                              max_value=50), 2),
+                'author': authors_names,
+                'date': date_str,
+                'rate': round(
+                    fake.pydecimal(left_digits=1, right_digits=1, min_value=0,
+                                   max_value=5), 1),
+            }
         )
-
-        # Assign 1 to 3 random categories to each book
-        book_categories = random.sample(categories, k=random.randint(1, 3))
-        book.categories.set(book_categories)
-
-        print(f'Book {book.title} added.')
+        if created:
+            book.categories.set(categories)
+            print(f'Book "{book.title}" added with categories.')
+        else:
+            print(f'Book "{book.title}" already exists.')
 
 
 if __name__ == '__main__':
-    add_categories()
-    add_books()
+    add_books_and_categories()
