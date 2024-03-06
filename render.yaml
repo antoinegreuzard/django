@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: django-app
+    env: python
+    buildCommand: pip install -r requirements.txt && npm install && npm run build && python manage.py migrate && python random_books.py && python manage.py collectstatic --noinput
+    startCommand: gunicorn server.wsgi:application --log-file -
+    envVars:
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+    staticAssets:
+      sourceDir: /staticfiles
+      publicPath: /static/
