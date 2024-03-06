@@ -56,6 +56,7 @@ def add_books_and_categories():
 
         authors = data.get('authors', [])
         authors_names = ', '.join([author['name'] for author in authors])
+        subjects = ', '.join(data.get('subject', [])
 
         first_publish_year = data.get('first_publish_year', None)
 
@@ -68,7 +69,7 @@ def add_books_and_categories():
                 start_date='-10y', end_date='today'
             ).isoformat()
 
-        description = f"This book, titled '{data['title']}', was first published in {first_publish_year}. It covers the following subjects: {subjects}. Written by {authors}."
+            description = f"This book, titled '{data['title']}', was first published in {first_publish_year}. It covers the following subjects: {subjects}. Written by {authors}."
 
         book, created = Book.objects.get_or_create(
             title=data['title'],
