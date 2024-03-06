@@ -20,7 +20,7 @@ def fetch_books():
     """
     response = requests.get(
         'http://openlibrary.org/subjects/programming.json?published_in=2000'
-        '-2024&limit=50')
+        '-2024&limit=500')
     if response.status_code == 200:
         return response.json()['works']
     else:
@@ -33,7 +33,9 @@ def is_french(subject):
     Determines if a given subject/category name is likely to be in French.
     """
     french_keywords = ['programmation', 'ingénierie', 'logiciel', 'systèmes',
-                       'informatique']
+                       'informatique', 'internet', 'système', 'ordinateur',
+                       'développement', 'développeur', 'algorithmes',
+                       'mathematiques']
     return any(keyword in subject.lower() for keyword in french_keywords)
 
 
