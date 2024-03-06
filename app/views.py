@@ -112,14 +112,26 @@ def account_view(request):
 
 
 def home(request):
-    """Display the home page with an optional search query."""
+    """Display the home page with an optional search query and sorting."""
     query = request.GET.get('q', '')
-    books = Book.objects.filter(
-        Q(title__icontains=query) | Q(description__icontains=query) | Q(
-            author__icontains=query))
+    sort_by = request.GET.get('sort_by', '')
+
+    books = Book.objects.all()
+
+    if query:
+        books = books.filter(
+            Q(title__icontains=query) | Q(description__icontains=query) | Q(
+                author__icontains=query))
+
+    if sort_by == 'price_asc':
+        books = books.order_by('price')
+    elif sort_by == 'price_desc':
+        books = books.order_by('-price')
+
     paginator = Paginator(books, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+
     return render(request, "app/home.html",
                   {'page_obj': page_obj, 'query': query})
 
