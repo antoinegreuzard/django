@@ -69,7 +69,7 @@ def add_books_and_categories():
                 start_date='-10y', end_date='today'
             ).isoformat()
 
-        description = f"This book, titled '{data['title']}', was first published in {first_publish_year}. It covers the following subjects: {subjects}. Written by {authors}."
+        description = f"Ce livre, intitulé '{data['title']}', a été publié pour la première fois en {first_publish_year}. Il couvre les sujets suivants : {subjects}. Écrit par {authors}."
 
         book, created = Book.objects.get_or_create(
             title=data['title'],
