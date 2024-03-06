@@ -7,6 +7,10 @@
   <script src="{% static 'app/bundles/home.bundle.js' %}"></script>
 {% endblock %}
 
+{% block extra_css %}
+  <script src="{% static 'app/css/home.css' %}"></script>
+{% endblock %}
+
 {% block content %}
   <h1>Liste des Livres</h1>
   <form id="searchAndSortForm" method="get" action="{% url 'home' %}" class="mb-4">

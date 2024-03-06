@@ -1,5 +1,3 @@
-import '../css/home.css';
-
 function debounce(func, wait) {
   let timeout;
   return (...args) => {
@@ -49,6 +47,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
   searchInput.addEventListener('input', () => {
     fetchAutocompleteData(searchInput.value);
-    console.log('test');
   });
 });

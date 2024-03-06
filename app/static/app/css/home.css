@@ -1,6 +1,10 @@
+#search-input {
+  border-radius: var(--bs-border-radius);
+}
+
 .autocomplete-items {
   position: absolute;
-  border: 1px solid #d4d4d4;
+  border: 0 solid #d4d4d4;
   border-top: none;
   z-index: 99;
   top: 100%;
