@@ -127,6 +127,10 @@ def home(request):
         books = books.order_by('price')
     elif sort_by == 'price_desc':
         books = books.order_by('-price')
+    elif sort_by == 'date_asc':
+        books = books.order_by('date')
+    elif sort_by == 'date_desc':
+        books = books.order_by('-date')
 
     paginator = Paginator(books, 9)
     page_number = request.GET.get('page')

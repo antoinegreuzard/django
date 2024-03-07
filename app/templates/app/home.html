@@ -29,6 +29,10 @@
           </option>
           <option value="price_desc" {% if request.GET.sort_by == 'price_desc' %}selected{% endif %}>Prix décroissant
           </option>
+          <option value="date_asc" {% if request.GET.sort_by == 'date_asc' %}selected{% endif %}>Date croissante
+          </option>
+          <option value="date_desc" {% if request.GET.sort_by == 'date_desc' %}selected{% endif %}>Date décroissante
+          </option>
         </select>
       </div>
     </div>
