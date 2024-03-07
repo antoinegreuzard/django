@@ -33,6 +33,10 @@
           </option>
           <option value="date_desc" {% if request.GET.sort_by == 'date_desc' %}selected{% endif %}>Date décroissante
           </option>
+          <option value="rating_asc" {% if request.GET.sort_by == 'rating_asc' %}selected{% endif %}>Note croissante
+          </option>
+          <option value="rating_desc" {% if request.GET.sort_by == 'rating_desc' %}selected{% endif %}>Note décroissante
+          </option>
         </select>
       </div>
     </div>
