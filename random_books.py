@@ -70,7 +70,7 @@ def generate_description(title, year, authors, subjects=None):
         description += (f" Ce livre aborde divers sujets tels que {subjects_formatted},"
                         f"le rendant indispensable pour les passionnés du domaine.")
 
-    description += ("Une lecture incontournable pour ceux qui s'intéressent "
+    description += (" Une lecture incontournable pour ceux qui s'intéressent "
                     "profondément à ce sujet.")
 
     return description
