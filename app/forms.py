@@ -4,10 +4,10 @@ from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 from django.forms import NumberInput, DateInput, CheckboxSelectMultiple, \
     CheckboxInput, FileInput, RadioSelect, EmailField, CharField, \
-    PasswordInput, ModelMultipleChoiceField
+    PasswordInput, ModelMultipleChoiceField, ImageField
 from django.contrib.auth import get_user_model
 
-from app.models import Book, Category
+from app.models import Book, Category, Author
 
 User = get_user_model()
 
@@ -89,4 +89,15 @@ class BookForm(CustomFormMixin, forms.ModelForm):
                 format='%Y-%m-%d'),
             'price': NumberInput(),
             'rate': NumberInput(attrs={'step': "0.01"}),
+            'cover_image': forms.FileInput(attrs={'class': 'form-control'}),
+        }
+
+
+class AuthorForm(forms.ModelForm):
+    class Meta:
+        model = Author
+        fields = '__all__'
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'photo': forms.FileInput(attrs={'class': 'form-control'}),
         }

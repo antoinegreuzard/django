@@ -55,9 +55,22 @@
     {% for book in page_obj %}
       <div class="col-md-4">
         <div class="card mb-4">
+          {% if book.cover_image %}
+            <img src="{{ book.cover_image }}" class="card-img-top" alt="Couverture de {{ book.title }}"
+                 style="height: 200px; width: auto; object-fit:cover;">
+          {% else %}
+            <img src="{% static 'images/auteur.jpg' %}" class="card-img-top" alt="Couverture par défaut"
+                 style="height: 200px; width: auto; object-fit:cover;">
+          {% endif %}
           <div class="card-body">
             <h5 class="card-title">{{ book.title }}</h5>
-            <h6 class="card-subtitle mb-2 text-muted">Auteur: {{ book.author }}</h6>
+            {% if book.author.photo %}
+              <img src="{{ book.author.photo }}" alt="Photo de {{ book.author.name }}"
+                   style="width: 50px; height: 50px; border-radius: 50%;">
+              <span class="card-subtitle text-muted">Auteur: {{ book.author.name }}</span>
+            {% else %}
+              <h6 class="card-subtitle mb-2 text-muted">Auteur: {{ book.author.name }}</h6>
+            {% endif %}
             <p class="card-text">{{ book.description }}</p>
             <p class="card-text">Prix: {{ book.price }} €</p>
             <p class="card-text">Date de publication: {{ book.date|date:"d F Y" }}</p>

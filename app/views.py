@@ -23,8 +23,8 @@ from rest_framework.permissions import IsAdminUser, SAFE_METHODS
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from app.forms import UserLoginForm, UserRegisterForm, BookForm
-from app.models import Book, Category
+from app.forms import UserLoginForm, UserRegisterForm, BookForm, AuthorForm
+from app.models import Book, Category, Author
 from app.serializers import UserSerializer, BookSerializer
 
 logger = logging.getLogger(__name__)
@@ -105,10 +105,14 @@ def logout_view(request):
 @login_required
 def account_view(request):
     """Display the account page for logged-in users."""
+    authors = Author.objects.all()
     books = Book.objects.filter(
         author=request.user
     ) if not request.user.is_superuser else Book.objects.all()
-    return render(request, "app/account.html", {'books': books})
+    return render(
+        request, "app/account.html",
+        {'books': books, 'authors': authors}
+    )
 
 
 def home(request):
@@ -120,8 +124,8 @@ def home(request):
 
     if query:
         books = books.filter(
-            Q(title__icontains=query) | Q(description__icontains=query) | Q(
-                author__icontains=query))
+            Q(title__icontains=query) | Q(description__icontains=query)
+        )
 
     if sort_by == 'price_asc':
         books = books.order_by('price')
@@ -154,6 +158,16 @@ class BookCRUDMixin(LoginRequiredMixin, UserPassesTestMixin):
         return self.request.user.is_superuser
 
 
+class AuthorCRUDMixin(LoginRequiredMixin, UserPassesTestMixin):
+    """Mixin to check user permissions for book CRUD operations."""
+    model = Author
+    form_class = AuthorForm
+    success_url = reverse_lazy('account')
+
+    def test_func(self):
+        return self.request.user.is_superuser
+
+
 class BookCreateView(BookCRUDMixin, CreateView):
     """A view for creating a new book instance."""
 
@@ -165,6 +179,20 @@ class BookUpdateView(BookCRUDMixin, UpdateView):
 class BookDeleteView(BookCRUDMixin, DeleteView):
     """A view for deleting an existing book instance."""
     template_name = 'app/book_confirm_delete.html'
+
+
+class AuthorCreateView(CreateView):
+    model = Author
+    form_class = AuthorForm
+    template_name = 'app/author_form.html'
+    success_url = reverse_lazy('author-list')
+
+    def form_valid(self, form):
+        return super().form_valid(form)
+
+
+class AuthorUpdateView(AuthorCRUDMixin, UpdateView):
+    """A view for updating an existing author instance."""
 
 
 @require_http_methods(["GET"])

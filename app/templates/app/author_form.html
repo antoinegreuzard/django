@@ -1,0 +1,24 @@
+{% extends "base_generic.html" %}
+
+{% block title %}
+  {% if object %}Modifier {{ object.title }}{% else %}Ajouter un auteur{% endif %}
+{% endblock %}
+
+{% block content %}
+  <div class="container mt-5">
+    <h2>A{% if object %}Modifier{% else %}Ajouter{% endif %} un livre</h2>
+    {% if author.photo %}
+      <div class="current-photo mb-3">
+        <h4>Photo actuelle</h4>
+        <img src="{{ author.photo.url }}" alt="Photo de {{ author.name }}" style="max-width: 200px; max-height: 200px;">
+      </div>
+    {% endif %}
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-primary">Enregistrer</button>
+      <a href="{% url 'account' %}" class="btn btn-secondary">Annuler</a>
+    </form>
+
+  </div>
+{% endblock %}
