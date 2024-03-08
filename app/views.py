@@ -17,7 +17,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST, require_http_methods
-from django.views.generic import CreateView, UpdateView, DeleteView
+from django.views.generic import CreateView, UpdateView, DeleteView, FormView
 from rest_framework import generics, status
 from rest_framework.permissions import IsAdminUser, SAFE_METHODS
 from rest_framework.response import Response
@@ -66,33 +66,31 @@ class BookListCreateAPIView(generics.ListCreateAPIView):
     permission_classes = [IsAdminOrReadOnly]
 
 
-def login_view(request):
-    """Handle user login requests."""
-    if request.method == "POST":
-        form = UserLoginForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data['email']
-            password = form.cleaned_data['password']
-            user = authenticate(request, email=email, password=password)
-            if user:
-                login(request, user)
-                return redirect('account')
+class LoginView(FormView):
+    form_class = UserLoginForm
+    template_name = 'app/login.html'
+    success_url = reverse_lazy('account')
+
+    def form_valid(self, form):
+        email = form.cleaned_data['email']
+        password = form.cleaned_data['password']
+        user = authenticate(self.request, email=email, password=password)
+        if user is not None:
+            login(self.request, user)
+            return super().form_valid(form)
+        else:
             form.add_error(None, "Invalid credentials")
-    else:
-        form = UserLoginForm()
-    return render(request, "app/login.html", {'form': form})
+            return self.form_invalid(form)
 
 
-def register_view(request):
-    """Handle user registration requests."""
-    if request.method == "POST":
-        form = UserRegisterForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('login')
-    else:
-        form = UserRegisterForm()
-    return render(request, "app/register.html", {'form': form})
+class RegisterView(CreateView):
+    form_class = UserRegisterForm
+    template_name = 'app/register.html'
+    success_url = reverse_lazy('login')
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
 
 
 @login_required

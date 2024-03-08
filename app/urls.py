@@ -7,9 +7,7 @@ and interaction with the Book model through the web API and views.
 
 from django.urls import path
 from app.views import CreateUserView, \
-    login_view, \
     logout_view, \
-    register_view, \
     account_view, \
     BookListCreateAPIView, \
     home, \
@@ -17,13 +15,13 @@ from app.views import CreateUserView, \
     BookUpdateView, \
     BookDeleteView, \
     search_autocomplete, add_category, AuthorCreateView, \
-    AuthorUpdateView
+    AuthorUpdateView, LoginView, RegisterView
 
 urlpatterns = [
     path('api/signup/', CreateUserView.as_view(), name='signup'),
-    path('login/', login_view, name='login'),
+    path('login/', LoginView.as_view(), name='login'),
     path('logout/', logout_view, name='logout'),
-    path('register/', register_view, name='register'),
+    path('register/', RegisterView.as_view(), name='register'),
     path('account/', account_view, name='account'),
     path('api/books/', BookListCreateAPIView.as_view(), name='book'),
     path('account/book/create/', BookCreateView.as_view(),
