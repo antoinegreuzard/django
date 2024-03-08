@@ -106,9 +106,7 @@ def logout_view(request):
 def account_view(request):
     """Display the account page for logged-in users."""
     authors = Author.objects.all()
-    books = Book.objects.filter(
-        author=request.user
-    ) if not request.user.is_superuser else Book.objects.all()
+    books = Book.objects.all()
     return render(
         request, "app/account.html",
         {'books': books, 'authors': authors}
@@ -171,9 +169,15 @@ class AuthorCRUDMixin(LoginRequiredMixin, UserPassesTestMixin):
 class BookCreateView(BookCRUDMixin, CreateView):
     """A view for creating a new book instance."""
 
+    def form_valid(self, form):
+        return super().form_valid(form)
+
 
 class BookUpdateView(BookCRUDMixin, UpdateView):
     """A view for updating an existing book instance."""
+
+    def form_valid(self, form):
+        return super().form_valid(form)
 
 
 class BookDeleteView(BookCRUDMixin, DeleteView):
@@ -193,6 +197,10 @@ class AuthorCreateView(CreateView):
 
 class AuthorUpdateView(AuthorCRUDMixin, UpdateView):
     """A view for updating an existing author instance."""
+    template_name = 'app/author_form.html'
+
+    def form_valid(self, form):
+        return super().form_valid(form)
 
 
 @require_http_methods(["GET"])
