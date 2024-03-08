@@ -76,7 +76,7 @@ def download_image(image_url, save_folder="images", save_name=None):
 def fetch_books():
     response = requests.get(
         'http://openlibrary.org/subjects/programming.json?published_in=2010'
-        '-2024&limit=1000&details=true')
+        '-2024&limit=30&details=true')
     if response.status_code == 200:
         return response.json()['works']
     else:
