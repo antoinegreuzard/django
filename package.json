@@ -28,7 +28,7 @@
     "eslint-plugin-prettier": "^5.5.4",
     "prettier": "^3.6.2",
     "style-loader": "^4.0.0",
-    "stylelint": "^16.23.0",
+    "stylelint": "^16.23.1",
     "stylelint-config-standard": "^39.0.0",
     "webpack": "^5.100.2",
     "webpack-cli": "^6.0.1"
